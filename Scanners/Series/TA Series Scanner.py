@@ -36,6 +36,8 @@ import Media                                                         # Episode
 import VideoFiles                                                    # Scan
 import Stack                                                         # Scan
 
+print("This is a test output from TA Series Scanner to see if it is logged.")
+
 ###### fnmatch polyfill  #############################################
 
 _cache = {}
@@ -131,6 +133,14 @@ class ConfigType(TypedDict):
     ta_cache_path: str
     ta_url: str
     ta_token: str
+
+### Get TA configuration ################################################################################
+def get_ta_config() -> ConfigType:
+    """get connection config"""
+    if not os.path.exists("config.json"):
+        raise FileNotFoundError("config.json file not found")
+    config_content: ConfigType = json.loads(read_file("config.json"))
+    return config_content
 
 # TA variables
 TUBEARCHIVIST_URL_BASE  = 'http://tubearchivist.local'
@@ -228,14 +238,6 @@ def setup():
         Log.info(u'id: {:>2}, type: {:<6}, agent: {:<30}, scanner: {:<30}, library: {:<24}, path: {}'.format(directory.get("key"), directory.get('type'), directory.get("agent"), directory.get("scanner"), directory.get('title'), location.get("path")))
   except Exception as e:  Log.error("Exception: '%s', library_xml could not be loaded. X-Plex-Token file created?" % (e))
   Log.info(u"".ljust(157, '='))
-
-### Get TA configuration ################################################################################
-def get_ta_config() -> ConfigType:
-    """get connection config"""
-    if not os.path.exists("config.json"):
-        raise FileNotFoundError("config.json file not found")
-    config_content: ConfigType = json.loads(read_file("config.json"))
-    return config_content
 
 ### Read in a local file ################################################################################
 def read_file(local_file):
