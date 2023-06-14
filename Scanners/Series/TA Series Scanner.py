@@ -13,7 +13,9 @@ import inspect                                                       # getfile, 
 import ssl                                                           # SSLContext
 import zipfile                                                       # ZipFile, namelist
 import json                                                          # loads
-from lxml import etree                                               # fromstring
+try:
+  from lxml import etree                                               # fromstring
+except ImportError: pass
 from typing import TypedDict                                         # TypedDict
 try:
   from ssl import PROTOCOL_TLS as SSL_PROTOCOL # Python >= 2.7.13 #ssl.PROTOCOL_TLSv1
