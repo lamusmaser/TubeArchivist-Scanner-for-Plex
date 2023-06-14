@@ -92,23 +92,6 @@ PLEX_LIBRARY_URL       = "http://localhost:32400/library/sections/"  # Allow to 
 SSL_CONTEXT            = ssl.SSLContext(SSL_PROTOCOL)
 HEADERS                = {'Content-type': 'application/json'}
 
-# SOURCE_IDS             = cic(ur'\[((?P<source>(anidb(|[2-4])|tvdb(|[2-6])|tmdb|tsdb|imdb|mal|youtube(|[2-3])))-(?P<id>[^\[\]]*)|(?P<yt>(PL[^\[\]]{16}|PL[^\[\]]{32}|(UU|FL|LP|RD|UC|HC)[^\[\]]{22})))\]')
-# SOURCE_ID_FILES        = ["anidb.id", "anidb2.id", "anidb3.id", "anidb4.id", "tvdb.id", "tvdb2.id", "tvdb3.id", "tvdb4.id", "tvdb5.id", "tmdb.id", "tsdb.id", "imdb.id", "mal.id", "youtube.id", "youtube2.id", "youtube3.id"]
-# SOURCE_ID_OFFSET       = cic(ur'(?P<id>\d{1,7})-(?P<season>s\d{1,3})?(?P<episode>e-?\d{1,3})?')
-# ASS_MAPPING_URL        = 'https://rawgit.com/ZeroQI/Absolute-Series-Scanner/master/tvdb4.mapping.xml'
-
-# ANIDB_HTTP_API_URL     = 'http://api.anidb.net:9001/httpapi?request=anime&client=hama&clientver=1&protover=1&aid='
-# ANIDB_SLEEP_MIN        = 6
-# AniDBBan               = False
-# ANIDB_TVDB_MAPPING     = 'https://raw.githubusercontent.com/Anime-Lists/anime-lists/master/anime-list-master.xml'
-# ANIDB_TVDB_MAPPING_MOD = 'https://rawgit.com/ZeroQI/Absolute-Series-Scanner/master/anime-list-corrections.xml'
-# ANIDB_TVDB_MAPPING_LOC = 'anime-list-custom.xml'  # Custom local correction for ScudLee mapping file url
-
-# TVDB_API1_URL          = 'http://thetvdb.com/api/A27AD9BE0DA63333/series/%s/all/en.xml'
-# TVDB_API2_LOGIN        = "https://api.thetvdb.com/login"
-# TVDB_API2_KEY          = "A27AD9BE0DA63333"
-# TVDB_API2_EPISODES     = 'https://api.thetvdb.com/series/{}/episodes?page={}'
-
 FILTER_CHARS    = "\\/:*?<>|;"  #_.~                                                                                                                                             # Windows file naming limitations + "~;" as plex cut title at this for the agent
 # SEASON_RX       = [ cic(ur'^(Specials|Speciali|SPs?|映像特典)'),                                                                                                                                           # Specials (season 0)
 #                     cic(ur'(^|(?P<show>.*)[\._\-\— ]+)(Season|Series|Book|Saison|Livre|Temporada|Stagione|[Ss]|se)[\._\—\- ]*?(?P<season>\d{1,4})([\._\-\— ]*.*|$)'),                      # (title) S01
