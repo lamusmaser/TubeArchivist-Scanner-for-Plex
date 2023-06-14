@@ -109,9 +109,10 @@ IGNORE_DIRS_RX      = [cic(entry) for entry in IGNORE_DIRS_RX_RAW]
 # Uses re.match() so forces a '^'
 IGNORE_FILES_RX     = [cic(ur'[ _\.\-]?sample'), cic(ur'-Recap\.'), cic(ur'\._'), cic(ur'OST'), cic(ur'soundtrack')]
 
-VIDEO_EXTS          = [ '3g2', '3gp', 'asf', 'asx', 'avc', 'avi', 'avs', 'bin', 'bivx', 'divx', 'dv', 'dvr-ms', 'evo', 'fli', 'flv', 'img', 'iso', 'm2t', 'm2ts', 'm2v',         #
-                        'm4v', 'mkv', 'mov', 'mp4', 'mpeg', 'mpg', 'mts', 'nrg', 'nsv', 'nuv', 'ogm', 'ogv', 'tp', 'pva', 'qt', 'rm', 'rmvb', 'sdp', 'swf', 'svq3', 'strm',      #
-                        'ts', 'ty', 'vdr', 'viv', 'vp3', 'wmv', 'wpl', 'wtv', 'xsp', 'xvid', 'webm', 'ifo', 'disc']                                                              # DVD: 'ifo', 'bup', 'vob'
+# VIDEO_EXTS          = [ '3g2', '3gp', 'asf', 'asx', 'avc', 'avi', 'avs', 'bin', 'bivx', 'divx', 'dv', 'dvr-ms', 'evo', 'fli', 'flv', 'img', 'iso', 'm2t', 'm2ts', 'm2v',         #
+#                         'm4v', 'mkv', 'mov', 'mp4', 'mpeg', 'mpg', 'mts', 'nrg', 'nsv', 'nuv', 'ogm', 'ogv', 'tp', 'pva', 'qt', 'rm', 'rmvb', 'sdp', 'swf', 'svq3', 'strm',      #
+#                         'ts', 'ty', 'vdr', 'viv', 'vp3', 'wmv', 'wpl', 'wtv', 'xsp', 'xvid', 'webm', 'ifo', 'disc']                                                              # DVD: 'ifo', 'bup', 'vob'
+VIDEO_EXTS          = [ 'mp4' ] # Replaced with only output coming from TubeArchivist at this point in time.
 
 # Word Search Compiled Regex (IGNORECASE is not required as word is lowered at start)
 WS_VERSION          = com(ur'v\d$')
