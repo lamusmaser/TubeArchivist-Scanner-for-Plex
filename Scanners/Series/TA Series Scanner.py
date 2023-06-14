@@ -36,7 +36,6 @@ import Media                                                         # Episode
 import VideoFiles                                                    # Scan
 import Stack                                                         # Scan
 
-print("This is a test output from TA Series Scanner to see if it is logged.")
 
 ###### fnmatch polyfill  #############################################
 
