@@ -439,8 +439,9 @@ def SaveDict(value, var, *arg):
 
 ### Set Logging to proper logging file ##################################################################
 def set_logging(root='', foldername='', filename='', backup_count=0, format='%(message)s', mode='a'):#%(asctime)-15s %(levelname)s -
-  if Dict(PLEX_LIBRARY, root, 'agent') == 'com.plexapp.agents.hama':  cache_path = os.path.join(PLEX_ROOT, 'Plug-in Support', 'Data', 'com.plexapp.agents.hama', 'DataItems', '_Logs')
-  else:                                                               cache_path = os.path.join(PLEX_ROOT, 'Logs', 'ASS Scanner Logs')
+  # if Dict(PLEX_LIBRARY, root, 'agent') == 'com.plexapp.agents.hama':  cache_path = os.path.join(PLEX_ROOT, 'Plug-in Support', 'Data', 'com.plexapp.agents.hama', 'DataItems', '_Logs')
+  # else:                                                               cache_path = os.path.join(PLEX_ROOT, 'Logs', 'ASS Scanner Logs')
+  cache_path = os.path.join(PLEX_ROOT, 'Logs', 'TA Series Scanner Logs')
 
   if not foldername:                  foldername = Dict(PLEX_LIBRARY, root, 'title')  # If foldername is not defined, try and pull the library title from PLEX_LIBRARY
   if foldername:                      cache_path = os.path.join(cache_path, os_filename_clean_string(foldername))
