@@ -665,30 +665,30 @@ def Scan(path, files, media, dirs, language=None, root=None, **kwargs): #get cal
   ### Old .plexignore file handling ###
   plexignore_dirs, plexignore_files = [], []
 
-  ### bluray/DVD folder management ### # source: https://github.com/doublerebel/plex-series-scanner-bdmv/blob/master/Plex%20Series%20Scanner%20(with%20disc%20image%20support).py
-  if len(reverse_path) >= 3 and reverse_path[0].lower() == 'stream' and reverse_path[1].lower() == 'bdmv' or "VIDEO_TS.IFO" in str(files).upper():
-    for temp in ['stream', 'bdmv', 'video_ts']:
-      if reverse_path[0].lower() == temp:  reverse_path.pop(0)
-    ep, disc = clean_string(reverse_path[0], True), True
-    if len(reverse_path)>1:  reverse_path.pop(0)  #Log.info(u"BluRay/DVD folder detected - using as equivalent to filename ep: '%s', show: '%s'" % (ep, reverse_path[0]))
-  else: disc = False
+  # ### bluray/DVD folder management ### # source: https://github.com/doublerebel/plex-series-scanner-bdmv/blob/master/Plex%20Series%20Scanner%20(with%20disc%20image%20support).py
+  # if len(reverse_path) >= 3 and reverse_path[0].lower() == 'stream' and reverse_path[1].lower() == 'bdmv' or "VIDEO_TS.IFO" in str(files).upper():
+  #   for temp in ['stream', 'bdmv', 'video_ts']:
+  #     if reverse_path[0].lower() == temp:  reverse_path.pop(0)
+  #   ep, disc = clean_string(reverse_path[0], True), True
+  #   if len(reverse_path)>1:  reverse_path.pop(0)  #Log.info(u"BluRay/DVD folder detected - using as equivalent to filename ep: '%s', show: '%s'" % (ep, reverse_path[0]))
+  # else: disc = False
 
   ### Remove season folder to reduce complexity and use folder as serie name ###
-  folder_season, season_folder_first = None, False
-  for folder in reverse_path[:-1]:                  # remove root folder from test, [:-1] Doesn't thow errors but gives an empty list if items don't exist, might not be what you want in other cases
-    if SOURCE_IDS.search(folder):  continue         #if it has a forced id, not a season folder
-    for rx in SEASON_RX:                            # in anime, more specials folders than season folders, so doing it first
-      folder_clean = clean_string(folder, no_dash=True, no_underscore=True, no_dot=True)
-      folder_clean = folder_clean.replace(reverse_path[-1], "")
-      match = rx.search(folder_clean)               #
-      if match:                                     # get season number but Skip last entry in seasons (skipped folders)
-        if rx!=SEASON_RX[-1]:
-          if rx==SEASON_RX[-2]: folder_season = romanToInt(match.group('season'))
-          else:                 folder_season = int( match.group('season')) if match.groupdict().has_key('season') and match.group('season') else 0 #break
-          if len(reverse_path)>=2 and folder==reverse_path[-2]:  season_folder_first = True
-        #msg.append(u'Removed season folder: "{}", SEASON_RX index: {}, Season: {}'.format(folder_clean, SEASON_RX.index(rx), folder_season))
-        reverse_path.remove(folder)                 # Since iterating slice [:] or [:-1] doesn't hinder iteration. All ways to remove: reverse_path.pop(-1), reverse_path.remove(thing|array[0])
-        break
+  # folder_season, season_folder_first = None, False
+  # for folder in reverse_path[:-1]:                  # remove root folder from test, [:-1] Doesn't thow errors but gives an empty list if items don't exist, might not be what you want in other cases
+  #   if SOURCE_IDS.search(folder):  continue         #if it has a forced id, not a season folder
+  #   for rx in SEASON_RX:                            # in anime, more specials folders than season folders, so doing it first
+  #     folder_clean = clean_string(folder, no_dash=True, no_underscore=True, no_dot=True)
+  #     folder_clean = folder_clean.replace(reverse_path[-1], "")
+  #     match = rx.search(folder_clean)               #
+  #     if match:                                     # get season number but Skip last entry in seasons (skipped folders)
+  #       if rx!=SEASON_RX[-1]:
+  #         if rx==SEASON_RX[-2]: folder_season = romanToInt(match.group('season'))
+  #         else:                 folder_season = int( match.group('season')) if match.groupdict().has_key('season') and match.group('season') else 0 #break
+  #         if len(reverse_path)>=2 and folder==reverse_path[-2]:  season_folder_first = True
+  #       #msg.append(u'Removed season folder: "{}", SEASON_RX index: {}, Season: {}'.format(folder_clean, SEASON_RX.index(rx), folder_season))
+  #       reverse_path.remove(folder)                 # Since iterating slice [:] or [:-1] doesn't hinder iteration. All ways to remove: reverse_path.pop(-1), reverse_path.remove(thing|array[0])
+  #       break
   folder_show = filter_chars(reverse_path[0]) if reverse_path else ""
 
   ### Remove un-needed sub-directories (mathing IGNORE_DIRS_RX) ###
