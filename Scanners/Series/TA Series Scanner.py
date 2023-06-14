@@ -297,7 +297,7 @@ def setup():
 
   ### Populate PLEX_LIBRARY #############################################################################
   Log.info(u"".ljust(157, '='))
-  Log.info(u"Plex scan start: {}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")))
+  Log.info(u"Plex scan started: {}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")))
   try:
     library_xml = etree.fromstring(read_url(Request(PLEX_LIBRARY_URL, headers={"X-Plex-Token": read_file(os.path.join(PLEX_ROOT, "X-Plex-Token.id")).strip() if os.path.isfile(os.path.join(PLEX_ROOT, "X-Plex-Token.id")) else Dict(os.environ, 'PLEXTOKEN')})))
     for directory in library_xml.iterchildren('Directory'):
@@ -441,9 +441,7 @@ def SaveDict(value, var, *arg):
 
 ### Set Logging to proper logging file ##################################################################
 def set_logging(root='', foldername='', filename='', backup_count=0, format='%(message)s', mode='a'):#%(asctime)-15s %(levelname)s -
-  # if Dict(PLEX_LIBRARY, root, 'agent') == 'com.plexapp.agents.hama':  cache_path = os.path.join(PLEX_ROOT, 'Plug-in Support', 'Data', 'com.plexapp.agents.hama', 'DataItems', '_Logs')
-  # else:                                                               cache_path = os.path.join(PLEX_ROOT, 'Logs', 'ASS Scanner Logs')
-  cache_path = os.path.join(PLEX_ROOT, 'Logs', 'TA Series Scanner Logs')
+  cache_path = os.path.join(PLEX_ROOT, 'Logs', 'TA Scanner Logs')
 
   if not foldername:                  foldername = Dict(PLEX_LIBRARY, root, 'title')  # If foldername is not defined, try and pull the library title from PLEX_LIBRARY
   if foldername:                      cache_path = os.path.join(cache_path, os_filename_clean_string(foldername))
@@ -571,7 +569,7 @@ def add_episode_into_plex(media, file, root, path, show, season=1, ep=1, title="
 
     for epn in range(ep, ep2+1):
       if len(show) == 0:
-        Log.warning(u"show: '{}', s{:02d}e{:03d}-{:03d}, file: '{}' has show empty, report logs to dev ASAP".format(show, season, ep, ep2, file))
+        Log.warning(u"show: '{}', s{:02d}e{:03d}-{:03d}, file: '{}' has empty show, report logs to dev ASAP".format(show, season, ep, ep2, file))
       else:# Media.Episode expects show and title in utf-8 encoded byte string (unicode title in Plex Media Scanner/log': WARN - Warning, Unicode passed in, should be UTF-8 string for attribute 'name')
         tv_show = Media.Episode(show, season, epn, title, year)  #tv_show = Media.Episode(show.encode('utf-8'), season, epn, title.encode('utf-8'), year)
         tv_show.display_offset = (epn-ep)*100/(ep2-ep+1)
