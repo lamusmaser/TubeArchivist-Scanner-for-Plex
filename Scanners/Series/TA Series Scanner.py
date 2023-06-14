@@ -248,7 +248,7 @@ class TubeArchivist:
         response = self.get("ping/")
         if not response:
             raise ConnectionError("Failed to connect to TubeArchivist at {}".format(self.base))
-        print("[connection] Verified TubeArchivist connection at {}".format(self.base))
+        Log.info(u"[connection] Verified TubeArchivist connection at {}".format(self.base))
 
 
 def env_check() -> None:
