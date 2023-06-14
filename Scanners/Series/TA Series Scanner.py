@@ -225,7 +225,7 @@ class TubeArchivist:
     def get(self, path: str) -> TAVideo:
         """get document from ta"""
         url: str = "{}/api/{}".format(self.base,path)
-        response = requests.get(url, headers=self.headers, timeout=10)
+        response = Request.get(url, headers=self.headers, timeout=10)
 
         if response.ok:
             response_json = response.json()
@@ -237,7 +237,7 @@ class TubeArchivist:
     def get_thumb(self, path: str) -> bytes:
         """get encoded thumbnail from ta"""
         url: str = TA_CONFIG["ta_url"] + path
-        response = requests.get(
+        response = Request.get(
             url, headers=self.headers, stream=True, timeout=10
         )
         base64_thumb: bytes = base64.b64encode(response.content)
