@@ -93,31 +93,7 @@ SSL_CONTEXT            = ssl.SSLContext(SSL_PROTOCOL)
 HEADERS                = {'Content-type': 'application/json'}
 
 FILTER_CHARS    = "\\/:*?<>|;"  #_.~                                                                                                                                             # Windows file naming limitations + "~;" as plex cut title at this for the agent
-# SEASON_RX       = [ cic(ur'^(Specials|Speciali|SPs?|映像特典)'),                                                                                                                                           # Specials (season 0)
-#                     cic(ur'(^|(?P<show>.*)[\._\-\— ]+)(Season|Series|Book|Saison|Livre|Temporada|Stagione|[Ss]|se)[\._\—\- ]*?(?P<season>\d{1,4})([\._\-\— ]*.*|$)'),                      # (title) S01
-#                     cic(u'(?P<show>.*)(?P<season>\d{1,4}).*сезон.*'),                                                                    # (title) S01
-#                     cic(ur'(^|(?P<show>.*)[\._\-\— ]*)Volume[\._\-\— ]*?(?P<season>(?=[MDCLXVI])M*D?C{0,4}L?X{0,4}V?I{0,4}).*?'),                                                 # (title) S01
-#                     cic(ur'^(Saga|(Story )?Ar[kc])')]                                                                                                                             # Last entry, folder name droped but files kept: Saga / Story Ar[kc] / Ar[kc]
-# SERIES_RX       = [                                                                                                                                                              ######### Series regex - "serie - xxx - title" ###
-#   cic(ur'(^|(?P<show>.*?)[ _\.\-]*)(?P<season>\d{1,2})XE?(?P<ep>\d{1,4})(([_\-X]|[_\-]\d{1,2}X)(?P<ep2>\d{1,4}))?([ _\.\-]+(?P<title>.*))?$'),                                    #  0 # 1x01
-#   cic(ur'(^|(?P<show>.*?)[ _\.\-]*)SE?(?P<season>\d{1,4})[ _\.\-]?EP?(?P<ep>\d{1,4})(([ _\.\-]|EP?|[ _\.\-]EP?)(?P<ep2>\d{1,4}))?[ _\.]*(?P<title>.*?)$'),                        #  1 # s01e01-02 | ep01-ep02 | e01-02 | s01-e01 | s01 e01'(^|(?P<show>.*?)[ _\.\-]+)(?P<ep>\d{1,4})[ _\.\-]?of[ _\.\-]?\d{1,4}([ _\.\-]+(?P<title>.*?))?$',                                                              #  2 # 01 of 08 (no stacking for this one ?)
-#   cic(ur'^(?P<show>.*?)[ _\.]-[ _\.](EP?)?(?P<ep>\d{1,3})(-(?P<ep2>\d{1,3}))?(V\d)?[ _\.]*?(?P<title>.*)$'), # 2 # Serie - xx - title.ext | ep01-ep02 | e01-02
-#   cic(ur'^(?P<show>.*?)[ _\.]\[(?P<season>\d{1,2})\][ _\.]\[(?P<ep>\d{1,4})\][ _\.](?P<title>.*)$'),
-#   cic(ur'^\[.*\]\[(?P<show>.*)\]\[第?(?P<ep>\d{1,4})[话話集]?(-(?P<ep2>\d{1,4})[话話集]?)?\].*$'),
-#   cic(ur'(^|(?P<show>.*)[ _\.\-]+)(?P<season>\d{1,2})ACV(?P<ep>\d{1,2})([ _\.\-]+(?P<title>.*)|$)') #20th Television production format (Futurama)
-#   ]
-# MOVIE_RX        = cic(ur'(?P<show>.*) \((?P<year>\d{4})\)$')
-# DATE_RX         = [ cic(ur'(?P<year>\d{4})[ \-\.]?(?P<month>\d{2})[ \-\.]?(?P<day>\d{2})'),  # 2009-02-10  #https://support.plex.tv/articles/200381053-naming-date-based-tv-shows/
-#                     cic(ur'(?P<month>\d{2})\W+(?P<day>\d{2})\W+(?P<year>\d{4})(\D|$)')]  # 02-10-2009
-# ANIDB_RX        = [                                                                                                                                                              ###### AniDB Specials episode offset regex array
-#                     cic(ur'(^|(?P<show>.*?)[ _\.\-]+)(S|SP|SPECIAL)[ _\.]?(?P<ep>\d{1,2})(-(?P<ep2>\d{1,3}))?(V\d)?[ _\.]?(?P<title>.*)$'),                                       #  0 # 001-099 Specials
-#                     cic(ur'(^|(?P<show>.*?)[ _\.\-]+)(OP|NCOP|OPENING)[ _\.]?(?P<ep>\d{1,2}[a-z]?)?[ _\.]?(V\d)?([ _\.\-]+(?P<title>.*))?$'),                                     #  1 # 100-149 Openings
-#                     cic(ur'(^|(?P<show>.*?)[ _\.\-]+)(ED|NCED|ENDING)[ _\.]?(?P<ep>\d{1,2}[a-z]?)?[ _\.]?(V\d)?([ _\.\-]+(?P<title>.*))?$'),                                      #  2 # 150-199 Endings
-#                     cic(ur'(^|(?P<show>.*?)[ _\.\-]+)(TRAILER|PROMO|PV|T)[ _\.]?(?P<ep>\d{1,2})[ _\.]?(V\d)?([ _\.\-]+(?P<title>.*))?$'),                                         #  3 # 200-299 Trailer, Promo with a  number  '(^|(?P<show>.*?)[ _\.\-]+)((?<=E)P|PARODY|PARODIES?) ?(?P<ep>\d{1,2})? ?(v2|v3|v4|v5)?(?P<title>.*)$',                                                                        # 10 # 300-399 Parodies
-#                     cic(ur'(^|(?P<show>.*?)[ _\.\-]+)(O|OTHERS?)(?P<ep>\d{1,2})[ _\.]?(V\d)?([ _\.\-]+(?P<title>.*))?$'),                                                         #  4 # 400-499 Others
-#                     cic(ur'(^|(?P<show>.*?)[ _\.\-]+)(EP?[ _\.\-]?)?第?(?P<ep>\d{1,4})[话話集]?((-|-?EP?)(?P<ep2>\d{1,4})[话話集]?)?[ _\.]?(V\d)?([ _\.\-]+(?P<title>.*))?$')]        #  5 # E01 | E01-02| E01-E02 | E01E02
-# ANIDB_OFFSET    = [        0,       100,      150,       200,     400,         0,         0]                                                                                     ###### AniDB Specials episode offset value array
-# ANIDB_TYPE      = ['Special', 'Opening', 'Ending', 'Trailer', 'Other', 'Episode', 'Episode']                                                                                     ###### AniDB titles
+                                                                                    ###### AniDB titles
 COUNTER         = 500
 
 IGNORE_DIRS  = [ '*/@Recycle/*', '*/.@__thumb/*', '*/@eaDir/*', '*/lost+found/*', '*/.DS_Store/*', '*/.AppleDouble/*', # OS cache-trash folders
