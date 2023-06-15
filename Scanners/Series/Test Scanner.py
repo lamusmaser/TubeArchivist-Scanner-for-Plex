@@ -43,6 +43,10 @@ import Media, VideoFiles, Stack, Utils
 #     '.*?[^0-9x](?P<ep>[0-9]{2,3})$'                        # Flah707
 #   ]
 
+youtube_regexs = [
+  '[0-9]{8}_?{11}_*.*'    # YYYYMMDD_XXXXXXXXXXX_TITLE.ext
+]
+
 # ends_with_number = '.*([0-9]{1,2})$'
 
 # ends_with_episode = ['[ ]*[0-9]{1,2}x[0-9]{1,3}$', '[ ]*S[0-9]+E[0-9]+$']
@@ -72,6 +76,21 @@ def Scan(path, files, mediaList, subdirs):
         file = os.path.basename(i)
         (file, ext) = os.path.splitext(file)
         
+        # found = False
+        for rx in youtube_regexs:
+          match = re.search(rx, file, re.IGNORECASE)
+          if match:
+            originalAirDate = file[0:7]
+            ytid = file[9:20]
+            season = originalAirDate[0:4]
+            episode = originalAirDate[5:]
+            title = file[22:]
+            tv_show = Media.Episode(show, season, episode, title, None)
+            tv_show.parts.append(i)
+            mediaList.append(tv_show)
+            break
+
+
         # # See if there's a pytivo metadata file to peek at
         # meta = dict()
         # metadata_filename = '{0}.txt'.format(i.replace('_LQ', ''))
