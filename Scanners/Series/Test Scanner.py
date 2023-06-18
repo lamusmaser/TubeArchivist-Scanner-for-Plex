@@ -160,7 +160,7 @@ def load_ta_config():
   if TA_CONFIG: return
   else:
     TA_CONFIG = get_ta_config()
-    write_to_test_output("TA_CONFIG: " + TA_CONFIG)
+    write_to_test_output("TA_CONFIG: " + str(TA_CONFIG))
 
 def get_ta_config():
   SCANNER_LOCATION = "/Scanners/Series/"
