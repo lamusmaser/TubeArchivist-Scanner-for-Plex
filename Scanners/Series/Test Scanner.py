@@ -144,7 +144,7 @@ def filter_chars(string):
 
 # Look for episodes.
 def Scan(path, files, mediaList, subdirs):
-  
+  setup()
   # Scan for video files.
   VideoFiles.Scan(path, files, mediaList, subdirs)
   
