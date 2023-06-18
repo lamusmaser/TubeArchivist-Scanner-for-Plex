@@ -23,6 +23,8 @@ except ImportError:
 
 # I needed some plex libraries, you may need to adjust your plex install location accordingly
 SetupDone              = False
+Log                    = None
+Handler                = None
 PLEX_ROOT              = ""
 PLEX_LIBRARY           = {}
 PLEX_LIBRARY_URL       = "http://localhost:32400/library/sections/"  # Allow to get the library name to get a log per library https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token
