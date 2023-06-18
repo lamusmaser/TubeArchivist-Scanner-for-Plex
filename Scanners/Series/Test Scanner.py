@@ -37,15 +37,15 @@ youtube_regexs = [
 
 ### Setup core variables ################################################################################
 def setup():
+  global SetupDone
   with open("/tmp/test-output.log","a") as f:
-    global SetupDone
     if SetupDone:  return
     else:          SetupDone = True
     f.write("SetupDone is set.")
 
   ### Define PLEX_ROOT ##################################################################################
+  global PLEX_ROOT
   with open("/tmp/test-output.log",'a') as f:
-    global PLEX_ROOT
     PLEX_ROOT = os.path.abspath(os.path.join(os.path.dirname(inspect.getfile(inspect.currentframe())), "..", ".."))
     f.write("Testing Initial PLEX_ROOT: " + PLEX_ROOT)
     if not os.path.isdir(PLEX_ROOT):
