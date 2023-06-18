@@ -39,9 +39,12 @@ youtube_regexs = [
 def setup():
   global SetupDone
   with open("/tmp/test-output.log","a") as f:
-    if SetupDone:  return
-    else:          SetupDone = True
-    f.write("SetupDone is set.")
+    f.write("Checking if SetupDone is set.")
+    if SetupDone:
+      return
+    else:
+      SetupDone = True
+    
 
   ### Define PLEX_ROOT ##################################################################################
   global PLEX_ROOT
