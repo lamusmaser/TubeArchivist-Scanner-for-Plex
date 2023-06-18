@@ -81,10 +81,10 @@ def Scan(path, files, mediaList, subdirs):
           match = re.search(rx, file, re.IGNORECASE)
           if match:
             originalAirDate = file[0:7]
-            ytid = file[9:20]
+            ytid = file[9:19]
             season = originalAirDate[0:4]
             episode = originalAirDate[5:]
-            title = file[22:]
+            title = file[21:]
             tv_show = Media.Episode(show, season, episode, title, None)
             tv_show.parts.append(i)
             mediaList.append(tv_show)
