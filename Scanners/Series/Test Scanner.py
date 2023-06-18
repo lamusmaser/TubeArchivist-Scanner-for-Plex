@@ -168,12 +168,20 @@ def get_ta_config():
   write_to_test_output("Expected config.json location: " + os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME))
   return json.loads(read_file(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) if os.path.isfile(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) else "{}")
 
+def test_ta_connection():
+  try:
+    ta_ping = etree.fromstring(read_url(Request("%s/api/ping".format(TA_CONFIG['ta_url']), headers={"Authorization": "Token %s".format(TA_CONFIG['ta_token'])})))
+    raise ta_ping
+  except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
+
 # Look for episodes.
 def Scan(path, files, mediaList, subdirs):
   setup()
+  load_ta_config()
+  test_ta_connection()
   # Scan for video files.
   VideoFiles.Scan(path, files, mediaList, subdirs)
-  
+
   # Take top two as show/season, but require at least the top one.
   paths = Utils.SplitPath(path)
   
@@ -181,11 +189,6 @@ def Scan(path, files, mediaList, subdirs):
     done = False
         
     if done == False:
-
-    #   # Not a perfect standalone match, so get information from directories. (e.g. "Lost/Season 1/s0101.mkv")
-    #   season = None
-    #   seasonNumber = None
-
       (show, year) = VideoFiles.CleanName(paths[0])
       
       for i in files:
@@ -203,7 +206,8 @@ def Scan(path, files, mediaList, subdirs):
             season = originalAirDate[0:4]
             episode = originalAirDate[5:]
 
-            load_ta_config()
+
+
 
             tv_show = Media.Episode(show, season, episode, title, None)
             tv_show.parts.append(i)
