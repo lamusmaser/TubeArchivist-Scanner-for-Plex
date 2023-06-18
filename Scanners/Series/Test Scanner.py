@@ -10,6 +10,8 @@ import inspect
 import time
 import ssl
 import datetime
+import TypedDict
+import json
 import logging, logging.handlers
 from lxml import etree
 try:
@@ -25,6 +27,7 @@ except ImportError:
 SetupDone              = False
 Log                    = None
 Handler                = None
+TA_CONFIG              = None
 PLEX_ROOT              = ""
 PLEX_LIBRARY           = {}
 PLEX_LIBRARY_URL       = "http://localhost:32400/library/sections/"  # Allow to get the library name to get a log per library https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token
@@ -37,6 +40,10 @@ youtube_regexs = [
   '[0-9]{8}_[a-zA-Z0-9]{11}_*.*'    # YYYYMMDD_XXXXXXXXXXX_TITLE.ext
 ]
 
+
+def write_to_test_output(str_out):
+  with open("/tmp/test-output.log", 'a') as f:
+    f.write("\n" + str_out)
 
 ### Setup core variables ################################################################################
 def setup():
@@ -51,16 +58,15 @@ def setup():
 
   ### Define PLEX_ROOT ##################################################################################
   global PLEX_ROOT
-  with open("/tmp/test-output.log",'a') as f:
-    PLEX_ROOT = os.path.abspath(os.path.join(os.path.dirname(inspect.getfile(inspect.currentframe())), "..", ".."))
-    f.write("\nTesting Initial PLEX_ROOT: " + PLEX_ROOT)
-    if not os.path.isdir(PLEX_ROOT):
-        path_location = { 'Windows': '%LOCALAPPDATA%\\Plex Media Server',
-                        'MacOSX':  '$HOME/Library/Application Support/Plex Media Server',
-                        'Linux':   '$PLEX_HOME/Library/Application Support/Plex Media Server',
-                        'Android': '/storage/emulated/0/Plex Media Server' }
-        PLEX_ROOT = os.path.expandvars(path_location[Platform.OS.lower()] if Platform.OS.lower() in path_location else '~')  # Platform.OS:  Windows, MacOSX, or Linux
-        f.write("\nPlatform review required, Platform: " + Platform.OS.lower() + " and the new PLEX_ROOT: " + PLEX_ROOT)
+  PLEX_ROOT = os.path.abspath(os.path.join(os.path.dirname(inspect.getfile(inspect.currentframe())), "..", ".."))
+  write_to_test_output("Testing Initial PLEX_ROOT: " + PLEX_ROOT)
+  if not os.path.isdir(PLEX_ROOT):
+      path_location = { 'Windows': '%LOCALAPPDATA%\\Plex Media Server',
+                      'MacOSX':  '$HOME/Library/Application Support/Plex Media Server',
+                      'Linux':   '$PLEX_HOME/Library/Application Support/Plex Media Server',
+                      'Android': '/storage/emulated/0/Plex Media Server' }
+      PLEX_ROOT = os.path.expandvars(path_location[Platform.OS.lower()] if Platform.OS.lower() in path_location else '~')  # Platform.OS:  Windows, MacOSX, or Linux
+      write_to_test_output("Platform review required, Platform: " + Platform.OS.lower() + " and the new PLEX_ROOT: " + PLEX_ROOT)
 
   ### Define logging setup ##############################################################################
   if sys.version[0] == '2':
@@ -150,6 +156,27 @@ def filter_chars(string):
     if char in string:  string = string.replace(char, subst)
   return string
 
+# ConfigType
+class ConfigType(TypedDict):
+    """describes the confic dict"""
+    ta_video_path: str
+    ta_cache_path: str
+    ta_url: str
+    ta_token: str
+
+def load_ta_config():
+  global TA_CONFIG
+  if TA_CONFIG: return
+  else:
+    TA_CONFIG = get_ta_config()
+    write_to_test_output("TA_CONFIG: " + TA_CONFIG)
+
+def get_ta_config():
+  SCANNER_LOCATION = "Scanner/Series"
+  CONFIG_NAME = "config.json"
+  write_to_test_output("Expected config.json location: " + PLEX_ROOT + SCANNER_LOCATION + CONFIG_NAME)
+  return json.loads(read_file(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) if os.path.isfile(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) else Dict(os.environ, 'TA_TOKEN'))
+
 # Look for episodes.
 def Scan(path, files, mediaList, subdirs):
   setup()
@@ -184,6 +211,9 @@ def Scan(path, files, mediaList, subdirs):
             title = file[21:]
             season = originalAirDate[0:4]
             episode = originalAirDate[5:]
+
+            load_ta_config()
+
             tv_show = Media.Episode(show, season, episode, title, None)
             tv_show.parts.append(i)
             mediaList.append(tv_show)
@@ -258,9 +288,9 @@ def Scan(path, files, mediaList, subdirs):
   Stack.Scan(path, files, mediaList, subdirs)
 
 if __name__ == '__main__':
-  print("Hello, world!")
+  print("Test Scanner by lamusmaser for Plex!")
   path = sys.argv[1]
   files = [os.path.join(path, file) for file in os.listdir(path)]
   media = []
   Scan(path[1:], files, media, [])
-  print("Media: ", media)
+  print("Files detected: ", media)
