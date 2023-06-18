@@ -22,6 +22,7 @@ except ImportError:
   from urllib2 import urlopen, Request     # Python == 2.x
 
 # I needed some plex libraries, you may need to adjust your plex install location accordingly
+SetupDone              = False
 PLEX_ROOT              = ""
 PLEX_LIBRARY           = {}
 PLEX_LIBRARY_URL       = "http://localhost:32400/library/sections/"  # Allow to get the library name to get a log per library https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token
@@ -39,7 +40,7 @@ youtube_regexs = [
 def setup():
   global SetupDone
   with open("/tmp/test-output.log","a") as f:
-    f.write("Checking if SetupDone is set.")
+    f.write("\nChecking if SetupDone is set.")
     if SetupDone:
       return
     else:
@@ -50,14 +51,14 @@ def setup():
   global PLEX_ROOT
   with open("/tmp/test-output.log",'a') as f:
     PLEX_ROOT = os.path.abspath(os.path.join(os.path.dirname(inspect.getfile(inspect.currentframe())), "..", ".."))
-    f.write("Testing Initial PLEX_ROOT: " + PLEX_ROOT)
+    f.write("\nTesting Initial PLEX_ROOT: " + PLEX_ROOT)
     if not os.path.isdir(PLEX_ROOT):
         path_location = { 'Windows': '%LOCALAPPDATA%\\Plex Media Server',
                         'MacOSX':  '$HOME/Library/Application Support/Plex Media Server',
                         'Linux':   '$PLEX_HOME/Library/Application Support/Plex Media Server',
                         'Android': '/storage/emulated/0/Plex Media Server' }
         PLEX_ROOT = os.path.expandvars(path_location[Platform.OS.lower()] if Platform.OS.lower() in path_location else '~')  # Platform.OS:  Windows, MacOSX, or Linux
-        f.write("Platform review required, Platform: " + Platform.OS.lower() + " and the new PLEX_ROOT: " + PLEX_ROOT)
+        f.write("\nPlatform review required, Platform: " + Platform.OS.lower() + " and the new PLEX_ROOT: " + PLEX_ROOT)
 
   ### Define logging setup ##############################################################################
   if sys.version[0] == '2':
