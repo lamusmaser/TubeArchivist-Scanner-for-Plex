@@ -166,7 +166,7 @@ def get_ta_config():
   SCANNER_LOCATION = "/Scanners/Series/"
   CONFIG_NAME = "config.json"
   write_to_test_output("Expected config.json location: " + PLEX_ROOT + SCANNER_LOCATION + CONFIG_NAME)
-  return json.loads(read_file(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) if os.path.isfile(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) else {})
+  return json.loads(read_file(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) if os.path.isfile(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) else "{}")
 
 # Look for episodes.
 def Scan(path, files, mediaList, subdirs):
