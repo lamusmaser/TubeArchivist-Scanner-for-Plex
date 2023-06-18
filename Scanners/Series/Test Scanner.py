@@ -44,7 +44,7 @@ import Media, VideoFiles, Stack, Utils
 #   ]
 
 youtube_regexs = [
-  '[0-9]{8}_?{11}_*.*'    # YYYYMMDD_XXXXXXXXXXX_TITLE.ext
+  '[0-9]{8}_[a-zA-Z0-9]{11}_*.*'    # YYYYMMDD_XXXXXXXXXXX_TITLE.ext
 ]
 
 # ends_with_number = '.*([0-9]{1,2})$'
