@@ -170,7 +170,7 @@ def get_ta_config():
 
 def test_ta_connection():
   try:
-    ta_ping = etree.fromstring(read_url(Request("{}/api/ping".format(TA_CONFIG['ta_url']), headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])})))
+    ta_ping = read_url(Request("{}/api/ping".format(TA_CONFIG['ta_url']), headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])}))
     raise ta_ping
   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
 
