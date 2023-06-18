@@ -10,7 +10,6 @@ import inspect
 import time
 import ssl
 import datetime
-import TypedDict
 import json
 import logging, logging.handlers
 from lxml import etree
@@ -155,14 +154,6 @@ def filter_chars(string):
   for char, subst in zip(list(FILTER_CHARS), [" " for x in range(len(FILTER_CHARS))]):
     if char in string:  string = string.replace(char, subst)
   return string
-
-# ConfigType
-class ConfigType(TypedDict):
-    """describes the confic dict"""
-    ta_video_path: str
-    ta_cache_path: str
-    ta_url: str
-    ta_token: str
 
 def load_ta_config():
   global TA_CONFIG
