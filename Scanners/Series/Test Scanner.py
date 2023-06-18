@@ -6,6 +6,20 @@ Custom scanner plugin for Plex Media Server for transferred Tivo recordings.
 
 import re, os, os.path
 import sys
+import inspect
+import time
+import ssl
+import datetime
+import logging, logging.handlers
+from lxml import etree
+try:
+  from ssl import PROTOCOL_TLS as SSL_PROTOCOL # Python >= 2.7.13 #ssl.PROTOCOL_TLSv1
+except ImportError:  
+  from ssl import PROTOCOL_SSLv23 as SSL_PROTOCOL # Python <  2.7.13
+try:
+  from urllib.request import urlopen, Request     # Python >= 3.0
+except ImportError:
+  from urllib2 import urlopen, Request     # Python == 2.x
 
 # I needed some plex libraries, you may need to adjust your plex install location accordingly
 PLEX_ROOT              = ""
@@ -14,42 +28,116 @@ PLEX_LIBRARY_URL       = "http://localhost:32400/library/sections/"  # Allow to 
 
 import Media, VideoFiles, Stack, Utils
 
-# episode_regexps = [
-#     '^Ep[^0-9a-z](?P<season>[0-9]{1,2})(?P<ep>[0-9]{2})[_\s](?P<title>[\w\s,.\-:;\'\"]+?)\s\(Rec.*$',       # Ep#112_Bad Wolf (Rec 08_19_2012).mp4
-#     '^(?P<season>)(?P<ep>)(?P<title>.+?)\s\(Rec.*$',	                                                    # Blink (Rec 09_13_2012).mp4
-#     '^Ep[^0-9a-z](?P<season>[0-9]{1,2})(?P<ep>[0-9]{2})[_\s](?P<title>[\w\s,.\-:;\'\"]+)$',                 # Ep#112 Bad Wolf.mp4
-#     '(?P<show>.*?)([^0-9]|^)(?P<season>[0-9]{1,2})[Xx](?P<ep>[0-9]+)(-[0-9]+[Xx](?P<secondEp>[0-9]+))?',    # 3x03
-#     '^S(?P<season>[0-9]{1,2})[Xx]?[eE]?(?P<ep>[0-9]{2})',                                                   # S1E01
-#   ]
-
-# date_regexps = [
-#     '(?P<year>[0-9]{4})[^0-9a-zA-Z]+(?P<month>[0-9]{2})[^0-9a-zA-Z]+(?P<day>[0-9]{2})([^0-9]|$)',           # 2009-02-10
-#     '(?P<month>[0-9]{2})[^0-9a-zA-Z]+(?P<day>[0-9]{2})[^0-9a-zA-Z(]+(?P<year>[0-9]{4})([^0-9a-zA-Z]|$)',    # 02-10-2009
-#   ]
-
-# standalone_episode_regexs = [
-#   '(.*?)( \(([0-9]+)\))? - ([0-9]+)+x([0-9]+)(-[0-9]+[Xx]([0-9]+))?( - (.*))?',         # Newzbin style, no _UNPACK_
-#   '(.*?)( \(([0-9]+)\))?[Ss]([0-9]+)+[Ee]([0-9]+)(-[0-9]+[Xx]([0-9]+))?( - (.*))?'      # standard s00e00
-#   ]
-  
-# season_regex = '.*?(?P<season>[0-9]+)$' # folder for a season
-
-# just_episode_regexs = [
-#     '(?P<ep>[0-9]{1,3})[\. -_]of[\. -_]+[0-9]{1,3}',       # 01 of 08
-#     '^(?P<ep>[0-9]{1,3})[^0-9]',                           # 01 - Foo
-#     'e[a-z]*[ \.\-_]*(?P<ep>[0-9]{2,3})([^0-9c-uw-z%]|$)', # Blah Blah ep234
-#     '.*?[ \.\-_](?P<ep>[0-9]{2,3})[^0-9c-uw-z%]+',         # Flah - 04 - Blah
-#     '.*?[ \.\-_](?P<ep>[0-9]{2,3})$',                      # Flah - 04
-#     '.*?[^0-9x](?P<ep>[0-9]{2,3})$'                        # Flah707
-#   ]
-
+SSL_CONTEXT            = ssl.SSLContext(SSL_PROTOCOL)
+FILTER_CHARS    = "\\/:*?<>|;"  #_.~  
 youtube_regexs = [
   '[0-9]{8}_[a-zA-Z0-9]{11}_*.*'    # YYYYMMDD_XXXXXXXXXXX_TITLE.ext
 ]
 
-# ends_with_number = '.*([0-9]{1,2})$'
 
-# ends_with_episode = ['[ ]*[0-9]{1,2}x[0-9]{1,3}$', '[ ]*S[0-9]+E[0-9]+$']
+### Setup core variables ################################################################################
+def setup():
+  global SetupDone
+  if SetupDone:  return
+  else:          SetupDone = True
+
+  ### Define PLEX_ROOT ##################################################################################
+  global PLEX_ROOT
+  PLEX_ROOT = os.path.abspath(os.path.join(os.path.dirname(inspect.getfile(inspect.currentframe())), "..", ".."))
+  if not os.path.isdir(PLEX_ROOT):
+    path_location = { 'Windows': '%LOCALAPPDATA%\\Plex Media Server',
+                      'MacOSX':  '$HOME/Library/Application Support/Plex Media Server',
+                      'Linux':   '$PLEX_HOME/Library/Application Support/Plex Media Server',
+                      'Android': '/storage/emulated/0/Plex Media Server' }
+    PLEX_ROOT = os.path.expandvars(path_location[Platform.OS.lower()] if Platform.OS.lower() in path_location else '~')  # Platform.OS:  Windows, MacOSX, or Linux
+
+  ### Define logging setup ##############################################################################
+  if sys.version[0] == '2':
+    from imp import reload
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
+  global Log
+  Log = logging.getLogger('main')
+  Log.setLevel(logging.DEBUG)
+  set_logging()
+
+  ### Populate PLEX_LIBRARY #############################################################################
+  Log.info(u"".ljust(157, '='))
+  Log.info(u"Plex scan started: {}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")))
+  try:
+    library_xml = etree.fromstring(read_url(Request(PLEX_LIBRARY_URL, headers={"X-Plex-Token": read_file(os.path.join(PLEX_ROOT, "X-Plex-Token.id")).strip() if os.path.isfile(os.path.join(PLEX_ROOT, "X-Plex-Token.id")) else Dict(os.environ, 'PLEXTOKEN')})))
+    for directory in library_xml.iterchildren('Directory'):
+      for location in directory.iterchildren('Location'):
+        PLEX_LIBRARY[location.get('path')] = {'title': directory.get('title'), 'scanner': directory.get("scanner"), 'agent': directory.get('agent')}
+        Log.info(u'id: {:>2}, type: {:<6}, agent: {:<30}, scanner: {:<30}, library: {:<24}, path: {}'.format(directory.get("key"), directory.get('type'), directory.get("agent"), directory.get("scanner"), directory.get('title'), location.get("path")))
+  except Exception as e:  Log.error("Exception: '%s', library_xml could not be loaded. X-Plex-Token file created?" % (e))
+  Log.info(u"".ljust(157, '='))
+
+### Read in a url #######################################################################################
+def read_url(url, data=None):
+  url_content = ""
+  try:
+    if data is None:  url_content = urlopen(url, context=SSL_CONTEXT).read()
+    else:             url_content = urlopen(url, context=SSL_CONTEXT, data=data).read()
+    return url_content
+  except Exception as e:  Log.error("Error reading url '%s', Exception: '%s'" % (url, e)); raise e
+
+
+### Read in a local file ################################################################################
+def read_file(local_file):
+  file_content = ""
+  try:
+    with open(local_file, 'r') as file:  file_content = file.read()
+    return file_content
+  except Exception as e:  Log.error("Error reading file '%s', Exception: '%s'" % (local_file, e)); raise e
+
+
+### Set Logging #########################################################################################
+def set_logging(root='', foldername='', filename='', backup_count=0, format='%(message)s', mode='a'):
+  log_path = os.path.join(PLEX_ROOT, 'Logs', 'Test Scanner Logs')
+  if not os.path.exists(log_path):  os.makedirs(log_path)
+  if not foldername:                  foldername = Dict(PLEX_LIBRARY, root, 'title')  # If foldername is not defined, try and pull the library title from PLEX_LIBRARY
+  if foldername:                      log_path = os.path.join(log_path, os_filename_clean_string(foldername))
+  if not os.path.exists(log_path):  os.makedirs(log_path)
+
+  filename = os_filename_clean_string(filename) if filename else '_root_.scanner.log'
+  log_file = os.path.join(log_path, filename)
+
+  # Bypass DOS path MAX_PATH limitation (260 Bytes=> 32760 Bytes, 255 Bytes per folder unless UDF 127B ytes max)
+  if os.sep=="\\":
+    dos_path = os.path.abspath(log_file) if isinstance(log_file, unicode) else os.path.abspath(log_file.decode('utf-8'))
+    log_file = u"\\\\?\\UNC\\" + dos_path[2:] if dos_path.startswith(u"\\\\") else u"\\\\?\\" + dos_path
+
+  #if not mode:  mode = 'a' if os.path.exists(log_file) and os.stat(log_file).st_mtime + 3600 > time.time() else 'w' # Override mode for repeat manual scans or immediate rescans
+
+  global Handler
+  if Handler:       Log.removeHandler(Handler)
+  if backup_count:  Handler = logging.handlers.RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=backup_count, encoding='utf-8')
+  else:             Handler = logging.FileHandler                 (log_file, mode=mode, encoding='utf-8')
+  Handler.setFormatter(logging.Formatter(format))
+  Handler.setLevel(logging.DEBUG)
+  Log.addHandler(Handler)
+
+#########################################################################################################
+def Dict(var, *arg, **kwarg):
+  """ Return the value of an (imbricated) dictionnary, if all fields exist else return "" unless "default=new_value" specified as end argument
+      Ex: Dict(variable_dict, 'field1', 'field2', default = 0)
+  """
+  for key in arg:
+    if isinstance(var, dict) and key and key in var:  var = var[key]
+    else:  return kwarg['default'] if kwarg and 'default' in kwarg else ""   # Allow Dict(var, tvdbid).isdigit() for example
+  return kwarg['default'] if var in (None, '', 'N/A', 'null') and kwarg and 'default' in kwarg else "" if var in (None, '', 'N/A', 'null') else var
+
+### Sanitize string #####################################################################################
+def os_filename_clean_string(string):
+  for char, subst in zip(list(FILTER_CHARS), [" " for x in range(len(FILTER_CHARS))]) + [("`", "'"), ('"', "'")]:    # remove leftover parenthesis (work with code a bit above)
+    if char in string:  string = string.replace(char, subst)                                                         # translate anidb apostrophes into normal ones #s = s.replace('&', 'and')
+  return string
+
+def filter_chars(string):
+  for char, subst in zip(list(FILTER_CHARS), [" " for x in range(len(FILTER_CHARS))]):
+    if char in string:  string = string.replace(char, subst)
+  return string
 
 # Look for episodes.
 def Scan(path, files, mediaList, subdirs):
@@ -82,9 +170,9 @@ def Scan(path, files, mediaList, subdirs):
           if match:
             originalAirDate = file[0:7]
             ytid = file[9:19]
+            title = file[21:]
             season = originalAirDate[0:4]
             episode = originalAirDate[5:]
-            title = file[21:]
             tv_show = Media.Episode(show, season, episode, title, None)
             tv_show.parts.append(i)
             mediaList.append(tv_show)
