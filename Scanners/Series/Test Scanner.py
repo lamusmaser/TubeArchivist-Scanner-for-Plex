@@ -163,7 +163,7 @@ def load_ta_config():
     write_to_test_output("TA_CONFIG: " + TA_CONFIG)
 
 def get_ta_config():
-  SCANNER_LOCATION = "Scanner/Series"
+  SCANNER_LOCATION = "/Scanner/Series/"
   CONFIG_NAME = "config.json"
   write_to_test_output("Expected config.json location: " + PLEX_ROOT + SCANNER_LOCATION + CONFIG_NAME)
   return json.loads(read_file(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) if os.path.isfile(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) else Dict(os.environ, 'TA_TOKEN'))
