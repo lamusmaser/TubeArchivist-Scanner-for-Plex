@@ -178,6 +178,9 @@ def test_ta_connection(iteration = 0, retries = 3):
     else:
       if iteration > retries:
         raise ConnectionError
+      sleep_count = 10 * (iteration + 2)
+      Log.info("Did not receive correct response, waiting {} seconds.".format(sleep_count))
+      time.sleep(sleep_count)
       return test_ta_connection(iteration += 1)
   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
 
@@ -185,7 +188,8 @@ def test_ta_connection(iteration = 0, retries = 3):
 def Scan(path, files, mediaList, subdirs):
   setup()
   load_ta_config()
-  test_ta_connection()
+  is_ta_on = None
+  is_ta_on = test_ta_connection()
   # Scan for video files.
   VideoFiles.Scan(path, files, mediaList, subdirs)
 
@@ -213,8 +217,11 @@ def Scan(path, files, mediaList, subdirs):
             season = originalAirDate[0:4]
             episode = originalAirDate[5:]
 
-
-
+            if is_ta_on:
+              video_metadata = get_ta_video_metadata(ytid)
+              title = video_metadata["title"]
+              season = video_metadata["season"]
+              episode = video_metadata["episode"]
 
             tv_show = Media.Episode(show, season, episode, title, None)
             tv_show.parts.append(i)
