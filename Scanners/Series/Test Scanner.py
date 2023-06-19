@@ -177,7 +177,7 @@ def test_ta_connection(iteration = 0, retries = 3):
       return True
     else:
       if iteration > retries:
-        raise ConnectionError
+        raise Exception('MaxRetriesReached')
       sleep_count = 10 * (iteration + 2)
       Log.info("Did not receive correct response, waiting {} seconds.".format(str(sleep_count)))
       time.sleep(sleep_count)
@@ -187,7 +187,7 @@ def test_ta_connection(iteration = 0, retries = 3):
 def get_ta_video_metadata(ytid, iteration = 0, retries = 3):
   try:
     if iteration > retries:
-      raise ConnectionError
+      raise Exception('MaxRetriesReached')
     try:
         Log.info("Attempt {} to connect to TA at {} with provided token to lookup ID {}.".format(str(iteration + 1), TA_CONFIG['ta_url'], ytid))
         metadata = {}
