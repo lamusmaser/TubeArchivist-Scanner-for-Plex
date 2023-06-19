@@ -184,25 +184,25 @@ def test_ta_connection(iteration = 0, retries = 3):
       return test_ta_connection(iteration + 1)
   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
 
-def get_ta_video_metadata(ytid, iteration = 0, retries = 3):
-  try:
-    if iteration > retries:
-      return None
-    try:
-        full_url = "{}/api/video/{}/".format(TA_CONFIG['ta_url'], ytid)
-        Log.info("Attempt {} to connect to TA at {} with provided token to lookup ID {}.".format(str(iteration + 1), full_url, ytid))
-        metadata = {}
-        r = Request(full_url, headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])}))
-        Log.info("Request created")
-        vid_response = json.loads(read_url(r))
-        Log.info("TA responded successfully. Processing response.")
-        metadata['show'] = "{} - {}".format(vid_response['data']['channel']['channel_name'], vid_response['data']['channel']['channel_id'])
-        metadata['title'] = vid_response['data']['title']
-        metadata['season'] = datetime.datetime.strptime(vid_response['data']['published'],"%d %b, %Y").year
-        metadata['episode'] = datetime.datetime.strptime(vid_response['data']['published'],"%d %b, %Y").strftime("%Y%m%d")
-        return metadata
-    except Exception as e: Log.error("Error with getting metadata, waiting 3 seconds and trying again."); time.sleep(3); get_ta_video_metadata(ytid, iteration + 1)
-  except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
+# def get_ta_video_metadata(ytid, iteration = 0, retries = 3):
+#   try:
+#     if iteration > retries:
+#       return None
+#     try:
+#         full_url = "{}/api/video/{}/".format(TA_CONFIG['ta_url'], ytid)
+#         Log.info("Attempt {} to connect to TA at {} with provided token to lookup ID {}.".format(str(iteration + 1), full_url, ytid))
+#         metadata = {}
+#         r = Request(full_url, headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])}))
+#         Log.info("Request created")
+#         vid_response = json.loads(read_url(r))
+#         Log.info("TA responded successfully. Processing response.")
+#         metadata['show'] = "{} - {}".format(vid_response['data']['channel']['channel_name'], vid_response['data']['channel']['channel_id'])
+#         metadata['title'] = vid_response['data']['title']
+#         metadata['season'] = datetime.datetime.strptime(vid_response['data']['published'],"%d %b, %Y").year
+#         metadata['episode'] = datetime.datetime.strptime(vid_response['data']['published'],"%d %b, %Y").strftime("%Y%m%d")
+#         return metadata
+#     except Exception as e: Log.error("Error with getting metadata, waiting 3 seconds and trying again."); time.sleep(3); get_ta_video_metadata(ytid, iteration + 1)
+#   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
 
 # Look for episodes.
 def Scan(path, files, mediaList, subdirs):
