@@ -245,7 +245,7 @@ def Scan(path, files, mediaList, subdirs):
               episode = video_metadata["episode"]
 
             tv_show = Media.Episode(show, season, None, title, season)
-            tv_show.released_at = episode
+            tv_show.released_at = "{}-{}-{}".format(str(episode)[:3],str(episode)[4:5],str(episode)[6:7])
             tv_show.parts.append(i)
             mediaList.append(tv_show)
             break
