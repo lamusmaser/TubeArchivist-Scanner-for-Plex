@@ -193,7 +193,7 @@ def get_ta_video_metadata(ytid, iteration = 0, retries = 3):
         Log.info("Attempt {} to connect to TA at {} with provided token to lookup ID {}.".format(str(iteration + 1), full_url, ytid))
         metadata = {}
         r = Request(full_url, headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])}))
-        Log.info("Request made")
+        Log.info("Request created")
         vid_response = json.loads(read_url(r))
         Log.info("TA responded successfully. Processing response.")
         metadata['show'] = "{} - {}".format(vid_response['data']['channel']['channel_name'], vid_response['data']['channel']['channel_id'])
@@ -245,7 +245,7 @@ def Scan(path, files, mediaList, subdirs):
               episode = video_metadata["episode"]
 
             tv_show = Media.Episode(show, season, None, title, season)
-            tv_show.released_at = str(episode).encode('utf-8') if isinstance(episode, unicode) else episode
+            tv_show.released_at = str(episode).encode('utf-8')
             tv_show.parts.append(i)
             mediaList.append(tv_show)
             break
