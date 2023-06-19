@@ -221,7 +221,7 @@ def Scan(path, files, mediaList, subdirs):
     done = False
     Log.info("Starting scan down paths...")
     if done == False:
-    #   (show, year) = VideoFiles.CleanName(paths[0])
+      (show, year) = VideoFiles.CleanName(paths[0])
       
       for i in files:
         Log.info("Reviewing {}.".format(i))
@@ -241,13 +241,13 @@ def Scan(path, files, mediaList, subdirs):
             season = originalAirDate[0:4]
             episode = originalAirDate[5:]
 
-            if is_ta_on:
-              Log.info("TA connected previously. Pulling metadata.")
-              video_metadata = get_ta_video_metadata(ytid)
-              show = video_metadata["show"]
-              title = video_metadata["title"]
-              season = video_metadata["season"]
-              episode = video_metadata["episode"]
+            # if is_ta_on:
+            #   Log.info("TA connected previously. Pulling metadata.")
+            #   video_metadata = get_ta_video_metadata(ytid)
+            #   show = video_metadata["show"]
+            #   title = video_metadata["title"]
+            #   season = video_metadata["season"]
+            #   episode = video_metadata["episode"]
 
             tv_show = Media.Episode(show, season, episode, title, season)
             # tv_show.released_at = "{}-{}-{}".format(str(episode)[:3],str(episode)[4:5],str(episode)[6:7])
