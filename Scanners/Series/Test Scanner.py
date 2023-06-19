@@ -191,7 +191,7 @@ def get_ta_video_metadata(ytid, iteration = 0, retries = 3):
     try:
         Log.info("Attempt {} to connect to TA at {} with provided token to lookup ID {}.".format(str(iteration + 1), TA_CONFIG['ta_url'], ytid))
         metadata = {}
-        vid_response = json.loads(read_url(Request("{}/api/video/{}/".format(TA_CONFIG['ta_url'],ytid), headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])})))
+        vid_response = json.loads(read_url(Request("{}/api/video/{}".format(TA_CONFIG['ta_url'],ytid), headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])})))
         Log.info("TA responded successfully. Processing response.")
         metadata['show'] = "{} - {}".format(vid_response['data']['channel']['channel_name'], vid_response['data']['channel']['channel_id'])
         metadata['title'] = vid_response['data']['title']
