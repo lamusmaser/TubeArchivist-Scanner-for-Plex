@@ -168,20 +168,28 @@ def get_ta_config():
   write_to_test_output("Expected config.json location: " + os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME))
   return json.loads(read_file(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) if os.path.isfile(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) else "{}")
 
-def test_ta_connection(iteration = 0, retries = 3):
+def test_ta_connection():
   try:
-    Log.info("Attempt {} to connect to TA at {} with provided token.".format(str(iteration + 1), TA_CONFIG['ta_url']))
+    Log.info("Attempt to connect to TA at {} with provided token.".format(TA_CONFIG['ta_url']))
     ta_ping = json.loads(read_url(Request("{}/api/ping".format(TA_CONFIG['ta_url']), headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])})))['response']
     Log.info("Response from TA: {}".format(ta_ping))
     if ta_ping == "pong":
       return True
-    else:
-      if iteration > retries:
-        return None
-      sleep_count = 10 * (iteration + 2)
-      Log.info("Did not receive correct response, waiting {} seconds.".format(str(sleep_count)))
-      time.sleep(sleep_count)
-      return test_ta_connection(iteration + 1)
+  except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
+
+def get_ta_video_metadata(ytid):
+  try:
+    Log.info("Attempt to connect to TA at {} with provided token to lookup YouTube ID {}.".format(TA_CONFIG['ta_url'], ytid))
+    vid_response = json.loads(read_url(Request("{}/api/video/{}/".format(TA_CONFIG['ta_url'],ytid), headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])})))
+    Log.info("Response from TA received.")
+    if vid_response:
+      metadata = {}
+      metadata['show'] = "{} - {}".format(vid_response['data']['channel']['channel_name'], vid_response['data']['channel']['channel_id'])
+      metadata['title'] = vid_response['data']['title']
+      processed_date = datetime.datetime.strptime(vid_response['data']['published'],"%d %b, %Y")
+      metadata['season'] = processed_date.year
+      metadata['episode'] = processed_date.strftime("%Y%m%d")
+      return metadata
   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
 
 # def get_ta_video_metadata(ytid, iteration = 0, retries = 3):
