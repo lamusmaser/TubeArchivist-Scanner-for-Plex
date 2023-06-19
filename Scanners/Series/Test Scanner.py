@@ -179,7 +179,7 @@ def test_ta_connection(iteration = 0, retries = 3):
       if iteration > retries:
         raise ConnectionError
       sleep_count = 10 * (iteration + 2)
-      Log.info("Did not receive correct response, waiting {} seconds.".format(sleep_count))
+      Log.info("Did not receive correct response, waiting {} seconds.".format(str(sleep_count)))
       time.sleep(sleep_count)
       return test_ta_connection(iteration += 1)
   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
