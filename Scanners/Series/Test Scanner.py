@@ -211,6 +211,7 @@ def Scan(path, files, mediaList, subdirs):
   is_ta_on = None
   is_ta_on = test_ta_connection()
   # Scan for video files.
+  Log.info("Scanning file paths...")
   VideoFiles.Scan(path, files, mediaList, subdirs)
 
   # Take top two as show/season, but require at least the top one.
@@ -218,11 +219,12 @@ def Scan(path, files, mediaList, subdirs):
   
   if len(paths) > 0 and len(paths[0]) > 0:
     done = False
-        
+    Log.info("Starting scan down paths...")
     if done == False:
     #   (show, year) = VideoFiles.CleanName(paths[0])
       
       for i in files:
+        Log.info("Reviewing {}.".format(i))
         done = False
         file = os.path.basename(i)
         (file, ext) = os.path.splitext(file)
@@ -230,7 +232,9 @@ def Scan(path, files, mediaList, subdirs):
         # found = False
         for rx in youtube_regexs:
           match = re.search(rx, file, re.IGNORECASE)
+          Log.info("Checking if file matches regex {}".format(rx))
           if match:
+            Log.info("File matches. Gathering filename-based configurations")
             originalAirDate = file[0:7]
             ytid = file[9:19]
             title = file[21:]
@@ -238,6 +242,7 @@ def Scan(path, files, mediaList, subdirs):
             episode = originalAirDate[5:]
 
             if is_ta_on:
+              Log.info("TA connected previously. Pulling metadata.")
               video_metadata = get_ta_video_metadata(ytid)
               show = video_metadata["show"]
               title = video_metadata["title"]
@@ -247,6 +252,7 @@ def Scan(path, files, mediaList, subdirs):
             tv_show = Media.Episode(show, season, episode, title, season)
             # tv_show.released_at = "{}-{}-{}".format(str(episode)[:3],str(episode)[4:5],str(episode)[6:7])
             tv_show.parts.append(i)
+            Log.info("Adding episode to TV show list.")
             mediaList.append(tv_show)
             break
 
