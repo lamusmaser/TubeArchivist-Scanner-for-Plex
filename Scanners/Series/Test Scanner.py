@@ -168,11 +168,17 @@ def get_ta_config():
   write_to_test_output("Expected config.json location: " + os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME))
   return json.loads(read_file(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) if os.path.isfile(os.path.join(PLEX_ROOT, SCANNER_LOCATION, CONFIG_NAME)) else "{}")
 
-def test_ta_connection():
+def test_ta_connection(iteration = 0, retries = 3):
   try:
-    Log.info("Attempting to connect to TA at {} with provided token.".format(TA_CONFIG['ta_url']))
+    Log.info("Attempt {} to connect to TA at {} with provided token.".format(str(iteration + 1), TA_CONFIG['ta_url']))
     ta_ping = json.loads(read_url(Request("{}/api/ping".format(TA_CONFIG['ta_url']), headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])})))['response']
     Log.info("Response from TA: {}".format(ta_ping))
+    if ta_ping == "pong":
+      return True
+    else:
+      if iteration > retries:
+        raise ConnectionError
+      return test_ta_connection(iteration += 1)
   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
 
 # Look for episodes.
