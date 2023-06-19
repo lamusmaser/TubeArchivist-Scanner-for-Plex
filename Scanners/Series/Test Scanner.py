@@ -170,8 +170,9 @@ def get_ta_config():
 
 def test_ta_connection():
   try:
+    Log.info("Attempting to connect to TA at {} with provided token.".format(TA_CONFIG['ta_url']))
     ta_ping = json.loads(read_url(Request("{}/api/ping".format(TA_CONFIG['ta_url']), headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])})))['response']
-    raise ta_ping
+    Log.info("Response from TA: {}".format(ta_ping))
   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
 
 # Look for episodes.
