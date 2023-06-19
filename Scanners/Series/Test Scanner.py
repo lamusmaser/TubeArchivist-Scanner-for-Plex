@@ -181,7 +181,7 @@ def test_ta_connection(iteration = 0, retries = 3):
       sleep_count = 10 * (iteration + 2)
       Log.info("Did not receive correct response, waiting {} seconds.".format(str(sleep_count)))
       time.sleep(sleep_count)
-      return test_ta_connection(iteration += 1)
+      return test_ta_connection(iteration + 1)
   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
 
 def get_ta_video_metadata(ytid, iteration = 0, retries = 3):
@@ -197,7 +197,7 @@ def get_ta_video_metadata(ytid, iteration = 0, retries = 3):
         metadata['season'] = datetime.datetime.strptime(vid_response['data']['published'],"%d %b, %Y").year
         metadata['episode'] = datetime.datetime.strptime(vid_response['data']['published'],"%d %b, %Y").strftime("%Y%m%d")
         return metadata
-    except Exception as e: time.sleep(3); return get_ta_video_metadata(ytid, iteration += 1)
+    except Exception as e: Log.error("Error with getting metadata, waiting 3 seconds and trying again."); time.sleep(3); get_ta_video_metadata(ytid, iteration + 1)
   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
 
 # Look for episodes.
