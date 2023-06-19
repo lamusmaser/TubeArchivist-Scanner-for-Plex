@@ -184,6 +184,22 @@ def test_ta_connection(iteration = 0, retries = 3):
       return test_ta_connection(iteration += 1)
   except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
 
+def get_ta_video_metadata(ytid, iteration = 0, retries = 3):
+  try:
+    if iteration > retries:
+      raise ConnectionError
+    try:
+        Log.info("Attempt {} to connect to TA at {} with provided token to lookup ID {}.".format(str(iteration + 1), TA_CONFIG['ta_url'], ytid))
+        metadata = {}
+        vid_response = json.loads(read_url(Request("{}/api/ping".format(TA_CONFIG['ta_url']), headers={"Authorization": "Token {}".format(TA_CONFIG['ta_token'])})))
+        metadata['show'] = "{} - {}".format(vid_response['data']['channel']['channel_name'], vid_response['data']['channel']['channel_id'])
+        metadata['title'] = vid_response['data']['title']
+        metadata['season'] = datetime.datetime.strptime(vid_response['data']['published'],"%d %b, %Y").year
+        metadata['episode'] = datetime.datetime.strptime(vid_response['data']['published'],"%d %b, %Y").strftime("%Y%m%d")
+        return metadata
+    except Exception as e: time.sleep(3); return get_ta_video_metadata(ytid, iteration += 1)
+  except Exception as e: Log.error("Error connecting to TA URL '%s', Exception: '%s'" % (TA_CONFIG['ta_url'], e)); raise e
+
 # Look for episodes.
 def Scan(path, files, mediaList, subdirs):
   setup()
@@ -219,6 +235,7 @@ def Scan(path, files, mediaList, subdirs):
 
             if is_ta_on:
               video_metadata = get_ta_video_metadata(ytid)
+              show = video_metadata["show"]
               title = video_metadata["title"]
               season = video_metadata["season"]
               episode = video_metadata["episode"]
