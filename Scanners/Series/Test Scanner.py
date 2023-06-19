@@ -240,7 +240,8 @@ def Scan(path, files, mediaList, subdirs):
               season = video_metadata["season"]
               episode = video_metadata["episode"]
 
-            tv_show = Media.Episode(show, season, episode, title, season)
+            tv_show = Media.Episode(show, season, None, title, season)
+            tv_show.released_at = str(episode).encode('utf-8') if isinstance(episode, unicode) else episode
             tv_show.parts.append(i)
             mediaList.append(tv_show)
             break
