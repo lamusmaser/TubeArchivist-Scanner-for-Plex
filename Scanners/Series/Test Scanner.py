@@ -87,9 +87,10 @@ def setup():
     reload(sys)
     sys.setdefaultencoding("utf-8")
   global Log
+  FORMAT='%(asctime)s [%(name)s] %(levelname)s - %(message)s'
+  logging.basicConfig(format=FORMAT)
   Log = logging.getLogger(SOURCE)
   Log.setLevel(logging.DEBUG)
-  Log.basicConfig(format='%(asctime)s [%(name)s] %(levelname)s - %(message)s')
   set_logging()
 
   ### Populate PLEX_LIBRARY #############################################################################
