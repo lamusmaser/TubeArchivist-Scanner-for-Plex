@@ -85,10 +85,10 @@ def setup():
   if sys.version[0] == '2':
     from imp import reload
     reload(sys)
-    reload(logging)
     sys.setdefaultencoding("utf-8")
   global Log
   FORMAT='%(asctime)s [%(name)s] %(levelname)s - %(message)s'
+  reload(logging)
   logging.basicConfig(level=logging.DEBUG, format=FORMAT)
   Log = logging.getLogger(SOURCE)
   set_logging()
