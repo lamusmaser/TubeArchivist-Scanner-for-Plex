@@ -43,7 +43,7 @@ youtube_regexs = [
 
 
 def output_help_to_file(filepath="/tmp/test-output.log", request="help"):
-    f = open(filepath, 'w')
+    f = open(filepath, 'a')
     sys.stdout = f
     pydoc.help(request)
     f.close()
@@ -271,9 +271,12 @@ def Scan(path, files, mediaList, subdirs):
 
             output_help_to_file(request="Media.Episode")
             tv_show = Media.Episode(show.encode("UTF-8"), season.encode("UTF-8"), None, title.encode("UTF-8"), season.encode("UTF-8"))
+            output_help_to_file(request="tv_show.released_at")
             tv_show.released_at = "{}-{}-{}".format(str(episode)[:3],str(episode)[4:5],str(episode)[6:7]).encode("UTF-8")
             tv_show.parts.append(i)
             Log.info("Adding episode to TV show list.")
+            output_help_to_file(request="Media")
+            output_help_to_file(request="mediaList")
             mediaList.append(tv_show)
             break
 
