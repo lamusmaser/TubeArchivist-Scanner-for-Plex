@@ -243,9 +243,9 @@ def Scan(path, files, mediaList, subdirs):
           Log.info("Checking if file matches regex {}".format(rx))
           if match:
             Log.info("File matches. Gathering filename-based configurations")
-            originalAirDate = file[0:7]
-            ytid = file[9:20]
-            title = file[21:]
+            originalAirDate = file[0:7] # YYYYMMDD
+            ytid = file[9:20] # XXXXXXXXXXX
+            title = file[21:] # Title
             season = originalAirDate[0:4]
             episode = originalAirDate[5:]
 
