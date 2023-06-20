@@ -240,7 +240,7 @@ def Scan(path, files, mediaList, subdirs):
         # found = False
         for rx in youtube_regexs:
           match = re.search(rx, file, re.IGNORECASE)
-          Log.info("Checking if file matches regex {}".format(rx))
+          Log.info("Checking if file matches regex `{}`".format(rx))
           if match:
             Log.info("File matches. Gathering filename-based configurations")
             originalAirDate = file[0:7] # YYYYMMDD
