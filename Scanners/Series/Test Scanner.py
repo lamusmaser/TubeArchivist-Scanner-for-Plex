@@ -228,11 +228,6 @@ def get_ta_video_metadata(ytid):
 
 # Look for episodes.
 def Scan(path, files, mediaList, subdirs):
-  Utils.Log("This is a test of 1.", 1, SOURCE)
-  Utils.Log("This is a test of 2.", 2, SOURCE)
-  Utils.Log("This is a test of 3.", 3, SOURCE)
-  Utils.Log("This is a test of 4.", 4, SOURCE)
-  Utils.Log("This is a test of 5.", 5, SOURCE)
   setup()
   load_ta_config()
   is_ta_on = None
