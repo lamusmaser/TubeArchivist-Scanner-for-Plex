@@ -184,7 +184,7 @@ def get_ta_video_metadata(ytid):
     Log.info("Response from TA received.")
     if vid_response:
       metadata = {}
-      metadata['show'] = "{} - {}".format(vid_response['data']['channel']['channel_name'], vid_response['data']['channel']['channel_id'])
+      metadata['show'] = "{} [{}]".format(vid_response['data']['channel']['channel_name'], vid_response['data']['channel']['channel_id'])
       metadata['title'] = vid_response['data']['title']
       processed_date = datetime.datetime.strptime(vid_response['data']['published'],"%d %b, %Y")
       metadata['season'] = processed_date.year
