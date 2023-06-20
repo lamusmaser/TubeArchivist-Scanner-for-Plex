@@ -85,11 +85,12 @@ def setup():
   if sys.version[0] == '2':
     from imp import reload
     reload(sys)
+    reload(logging)
     sys.setdefaultencoding("utf-8")
   global Log
   FORMAT='%(asctime)s [%(name)s] %(levelname)s - %(message)s'
   logging.basicConfig(level=logging.DEBUG, format=FORMAT)
-  Log = logging.getLogger(__name__)
+  Log = logging.getLogger(SOURCE)
   set_logging()
 
   ### Populate PLEX_LIBRARY #############################################################################
