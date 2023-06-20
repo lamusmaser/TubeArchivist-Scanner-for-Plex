@@ -55,7 +55,7 @@ def output_help_to_file(request, filepath="/tmp/test-output.log"):
 
 def write_to_test_output(str_out):
   with open("/tmp/test-output.log", 'a') as f:
-    f.write("\n" + datetime.datetime.now() + "\n" + str_out)
+    f.write("\n" + datetime.datetime.now().strftime(":::%Y%m%d-%H:%M:%S:::") + "\n" + str_out)
 
 ### Setup core variables ################################################################################
 def setup():
