@@ -22,6 +22,8 @@ try:
 except ImportError:
   from urllib2 import urlopen, Request     # Python == 2.x
 
+import pydoc
+
 # I needed some plex libraries, you may need to adjust your plex install location accordingly
 SetupDone              = False
 Log                    = None
@@ -39,6 +41,14 @@ youtube_regexs = [
   '[0-9]{8}_[a-zA-Z0-9]{11}_*.*'    # YYYYMMDD_XXXXXXXXXXX_TITLE.ext
 ]
 
+
+def output_help_to_file(filepath="/tmp/test-output.log", request="help"):
+    f = open(filepath, 'w')
+    sys.stdout = f
+    pydoc.help(request)
+    f.close()
+    sys.stdout = sys.__stdout__
+    return
 
 def write_to_test_output(str_out):
   with open("/tmp/test-output.log", 'a') as f:
@@ -259,8 +269,7 @@ def Scan(path, files, mediaList, subdirs):
                 episode = video_metadata["episode"]
               except Exception as e: Log.error("Issue with setting metadata from Video using this metadata: '%s', Exception: '%s'" % (str(video_metadata), e))
 
-            Log.info("Help for Media.Episode: " + help(Media.Episode))
-            Log.info("Help for Media.Episode(): " + help(Media.Episode()))
+            output_help_to_file(request="Media.Episode")
             tv_show = Media.Episode(show.encode("UTF-8"), season.encode("UTF-8"), None, title.encode("UTF-8"), season.encode("UTF-8"))
             tv_show.released_at = "{}-{}-{}".format(str(episode)[:3],str(episode)[4:5],str(episode)[6:7]).encode("UTF-8")
             tv_show.parts.append(i)
