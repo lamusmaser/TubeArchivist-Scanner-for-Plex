@@ -271,13 +271,17 @@ def Scan(path, files, mediaList, subdirs):
                 episode = video_metadata["episode"]
               except Exception as e: Log.error("Issue with setting metadata from Video using this metadata: '%s', Exception: '%s'" % (str(video_metadata), e))
 
+            write_to_test_output("Requesting helper with 'Media.Episode'.")
             output_help_to_file(request="Media.Episode")
             tv_show = Media.Episode(show.encode("UTF-8"), season.encode("UTF-8"), None, title.encode("UTF-8"), season.encode("UTF-8"))
+            write_to_test_output("Requesting helper with 'tv_show.released_at'.")
             output_help_to_file(request="tv_show.released_at")
             tv_show.released_at = "{}-{}-{}".format(str(episode)[:3],str(episode)[4:5],str(episode)[6:7]).encode("UTF-8")
             tv_show.parts.append(i)
             Log.info("Adding episode to TV show list.")
+            write_to_test_output("Requesting helper with 'Media'.")
             output_help_to_file(request="Media")
+            write_to_test_output("Requesting helper with 'mediaList'.")
             output_help_to_file(request="mediaList")
             mediaList.append(tv_show)
             break
