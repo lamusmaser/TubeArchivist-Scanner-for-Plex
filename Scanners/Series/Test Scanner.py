@@ -87,10 +87,8 @@ def setup():
     reload(sys)
     sys.setdefaultencoding("utf-8")
   global Log
-  FORMAT='%(asctime)s [%(name)s] %(levelname)s - %(message)s'
-  reload(logging)
-  logging.basicConfig(level=logging.DEBUG, format=FORMAT)
   Log = logging.getLogger(SOURCE)
+  Log.setLevel(logging.DEBUG)
   set_logging()
 
   ### Populate PLEX_LIBRARY #############################################################################
@@ -126,7 +124,7 @@ def read_file(local_file):
 
 
 ### Set Logging #########################################################################################
-def set_logging(root='', foldername='', filename='', backup_count=0, format='%(message)s', mode='a'):
+def set_logging(root='', foldername='', filename='', backup_count=0, format='%(asctime)s [%(name)s] %(levelname)s - %(message)s', mode='a'):
   log_path = os.path.join(PLEX_ROOT, 'Logs', 'Test Scanner Logs')
   if not os.path.exists(log_path):  os.makedirs(log_path)
   if not foldername:                  foldername = Dict(PLEX_LIBRARY, root, 'title')  # If foldername is not defined, try and pull the library title from PLEX_LIBRARY
