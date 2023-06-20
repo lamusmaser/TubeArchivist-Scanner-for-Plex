@@ -44,12 +44,13 @@ youtube_regexs = [
 
 def output_help_to_file(filepath="/tmp/test-output.log", request="help"):
     f = open(filepath, 'a')
+    out = sys.stdout
     sys.stdout = f
     f.write("\n")
     pydoc.help(request)
     f.write("\n")
     f.close()
-    sys.stdout = sys.__stdout__
+    sys.stdout = out
     return
 
 def write_to_test_output(str_out):
