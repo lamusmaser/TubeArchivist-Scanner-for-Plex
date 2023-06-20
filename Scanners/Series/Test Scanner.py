@@ -250,12 +250,14 @@ def Scan(path, files, mediaList, subdirs):
             episode = originalAirDate[5:]
 
             if is_ta_on:
-              Log.info("TA connected previously. Pulling metadata.")
-              video_metadata = get_ta_video_metadata(ytid)
-              show = video_metadata["show"]
-              title = video_metadata["title"]
-              season = video_metadata["season"]
-              episode = video_metadata["episode"]
+              try:
+                Log.info("TA connected previously. Pulling metadata.")
+                video_metadata = get_ta_video_metadata(ytid)
+                show = video_metadata["show"]
+                title = video_metadata["title"]
+                season = video_metadata["season"]
+                episode = video_metadata["episode"]
+              except Exception as e: Log.error("Issue with setting metadata from Video using this metadata: '%s', Exception: '%s'" % (str(video_metadata), e))
 
             tv_show = Media.Episode(show, season, episode, title, season)
             tv_show.released_at = "{}-{}-{}".format(str(episode)[:3],str(episode)[4:5],str(episode)[6:7])
