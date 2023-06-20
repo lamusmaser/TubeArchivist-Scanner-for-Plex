@@ -244,7 +244,7 @@ def Scan(path, files, mediaList, subdirs):
           if match:
             Log.info("File matches. Gathering filename-based configurations")
             originalAirDate = file[0:7]
-            ytid = file[9:19]
+            ytid = file[9:20]
             title = file[21:]
             season = originalAirDate[0:4]
             episode = originalAirDate[5:]
