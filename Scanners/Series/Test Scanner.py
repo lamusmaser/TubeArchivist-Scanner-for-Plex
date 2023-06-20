@@ -32,6 +32,7 @@ TA_CONFIG              = None
 PLEX_ROOT              = ""
 PLEX_LIBRARY           = {}
 PLEX_LIBRARY_URL       = "http://localhost:32400/library/sections/"  # Allow to get the library name to get a log per library https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token
+SOURCE                 = "Test Scanner"
 
 import Media, VideoFiles, Stack, Utils
 
@@ -227,6 +228,11 @@ def get_ta_video_metadata(ytid):
 
 # Look for episodes.
 def Scan(path, files, mediaList, subdirs):
+  Utils.Log("This is a test of 1.", 1, SOURCE)
+  Utils.Log("This is a test of 2.", 2, SOURCE)
+  Utils.Log("This is a test of 3.", 3, SOURCE)
+  Utils.Log("This is a test of 4.", 4, SOURCE)
+  Utils.Log("This is a test of 5.", 5, SOURCE)
   setup()
   load_ta_config()
   is_ta_on = None
@@ -356,7 +362,7 @@ def Scan(path, files, mediaList, subdirs):
   Stack.Scan(path, files, mediaList, subdirs)
 
 if __name__ == '__main__':
-  print("Test Scanner by lamusmaser for Plex!")
+  print("{} by lamusmaser for Plex!".format(SOURCE))
   path = sys.argv[1]
   files = [os.path.join(path, file) for file in os.listdir(path)]
   media = []
